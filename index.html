@@ -16,7 +16,7 @@
     .level-btn.active { background: #ffffff; color: #1e40af; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
     
     .key-container { display: flex; justify-content: center; gap: 6px; padding: 0 10px; }
-    .key-container input { flex: 1; max-width: 280px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 0.8rem; }
+    .key-container input { flex: 1; max-width: 260px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 0.8rem; }
     .key-container button { padding: 6px 12px; background: #059669; color: white; border: none; border-radius: 6px; font-size: 0.8rem; cursor: pointer; }
 
     #chat { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
@@ -47,7 +47,7 @@
         <button class="level-btn" onclick="setLevel('pro', this)">Pro</button>
       </div>
       <div class="key-container">
-        <input type="password" id="apiKeyInput" placeholder="Paste your Gemini API key here" />
+        <input type="password" id="apiKeyInput" placeholder="Paste Gemini API Key" />
         <button onclick="saveApiKey()">Save</button>
       </div>
     </div>
@@ -56,14 +56,14 @@
   <div id="chat">
     <div class="msg-group guddu">
       <div class="msg">
-        Hi there! I am Guddu, your English speaking buddy. Ask me anything, or tell me about your day! Tap the mic to begin.
+        Hi there! I am Guddu, your English speaking buddy. First save your Gemini API key above, then tap the mic to practice with me!
       </div>
     </div>
   </div>
 
   <div class="controls">
     <div class="status" id="statusText">Tap mic to speak</div>
-    <button id="micBtn" onclick="toggleMic()">🎙️</button>
+    <button id="micBtn" onclick="toggleMic()">🎙️️</button>
   </div>
 
   <script>
@@ -86,7 +86,7 @@
       if (!val) return alert("Please enter a valid API key.");
       localStorage.setItem('gemini_api_key', val);
       apiKey = val;
-      alert("API key saved! You can now talk to Guddu.");
+      alert("API Key saved! Now you can talk to Guddu.");
     }
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -118,17 +118,17 @@
       recognition.onerror = () => {
         isListening = false;
         micBtn.classList.remove('listening');
-        statusText.innerText = "Could not hear clearly. Tap to retry.";
+        statusText.innerText = "Could not hear clearly. Tap mic to retry.";
       };
     }
 
     function toggleMic() {
       if (!apiKey) {
-        alert("Please paste and save your Gemini API key in the box at the top first!");
+        alert("Please enter and Save your Gemini API Key in the box at the top first!");
         return;
       }
       if (!recognition) {
-        alert("Speech recognition isn't supported on this browser. Please open this page in Google Chrome.");
+        alert("Speech recognition is not supported in this browser. Please open in Google Chrome.");
         return;
       }
       if (isListening) {
@@ -156,7 +156,7 @@
       if (tip && tip.has_error) {
         const tipDiv = document.createElement('div');
         tipDiv.className = 'tip-box';
-        tipDiv.innerHTML = `💡 <b>Correction:</b> Instead of <em>"${tip.user_phrase}"</em>, you can say: <strong>"${tip.corrected_phrase}"</strong><br><small style="color:#78350f;">${tip.explanation}</small>`;
+        tipDiv.innerHTML = `💡 <b>Correction:</b> Instead of <em>"${tip.user_phrase}"</em>, say: <strong>"${tip.corrected_phrase}"</strong><br><small>${tip.explanation}</small>`;
         group.appendChild(tipDiv);
       }
 
@@ -174,28 +174,28 @@
     }
 
     async function callGudduAI(userText) {
-      statusText.innerText = "Guddu is listening & thinking...";
+      statusText.innerText = "Guddu is thinking...";
       
-      const systemPrompt = `You are "Guddu", an encouraging, highly conversational, and warm English tutor and companion.
-The user is speaking to you to practice their English.
+      const systemPrompt = `You are "Guddu", a friendly, patient, encouraging Indian-origin English tutor and conversation friend.
+The user is speaking to practice their spoken English.
 
-Current User Level: ${currentLevel.toUpperCase()}
+Current Level: ${currentLevel.toUpperCase()}
 Level guidelines:
-- BASIC: Use short, simple sentences (5-9 words). Talk very clearly. Only correct major grammar/tense mistakes.
-- MODERATE: Natural everyday friendly conversation. Suggest smoother phrases and correct prepositions/tenses.
-- PRO: Fluent, expressive, articulate conversation. Focus on polishing idioms, tone, and eloquence.
+- BASIC: Use short, simple sentences (5 to 9 words). Very clear English. Only correct serious grammar mistakes.
+- MODERATE: Natural conversational style with everyday expressions. Help smooth out phrasing and prepositions.
+- PRO: Fluent, articulate English. Suggest advanced vocabulary and eloquence.
 
 Instructions:
-1. Answer the user's question or respond directly to their statement like a real human friend named Guddu.
-2. If the user makes an English grammar, vocabulary, or phrasing mistake, identify it. If their sentence is correct, set has_error to false.
-3. Keep the conversation moving by asking an engaging follow-up question.
-4. Output MUST be ONLY valid JSON in this exact structure:
+1. Always address the user's specific questions or statements directly like a real human friend.
+2. If the user makes an English mistake (grammar, tense, word choice), spot it. If no mistake, set has_error to false.
+3. Keep conversation lively by ending your spoken reply with a friendly question.
+4. Output MUST be ONLY valid JSON matching this schema:
 {
   "has_error": boolean,
-  "user_phrase": "string or null",
-  "corrected_phrase": "string or null",
-  "explanation": "string or null",
-  "guddu_reply": "string (your friendly reply answering them)"
+  "user_phrase": "exact part with error, or null",
+  "corrected_phrase": "proper way to say it, or null",
+  "explanation": "short 1-sentence friendly tip, or null",
+  "guddu_reply": "your conversational reply to user"
 }`;
 
       conversationHistory.push({ role: "user", parts: [{ text: userText }] });
@@ -233,8 +233,8 @@ Instructions:
         statusText.innerText = "Tap mic to speak";
       } catch (err) {
         console.error(err);
-        statusText.innerText = "Error getting response. Check your API key.";
-        alert("Could not reach AI. Please check that your Gemini API key is valid.");
+        statusText.innerText = "Error. Please verify your API key.";
+        alert("AI request failed. Please check that your Gemini API key is valid.");
       }
     }
   </script>
